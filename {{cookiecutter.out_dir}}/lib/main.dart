@@ -9,6 +9,10 @@ import 'package:path/path.dart' as path;
 import 'package:serious_python/serious_python.dart';
 import 'package:url_strategy/url_strategy.dart';
 
+{% for dep in cookiecutter.flutter.dependencies %}
+import 'package:{{ dep }}/{{ dep }}.dart' as {{ dep }};
+{% endfor %}
+
 const bool isProduction = bool.fromEnvironment('dart.vm.product');
 
 const assetPath = "app/app.zip";
@@ -18,6 +22,12 @@ final hideLoadingPage =
         true;
 const outLogFilename = "out.log";
 const errorExitCode = 100;
+
+List<CreateControlFactory> createControlFactories = [
+{% for dep in cookiecutter.flutter.dependencies %}
+{{ dep }}.createControl,
+{% endfor %}
+];
 
 const pythonScript = """
 import certifi, os, runpy, socket, sys, traceback
@@ -79,6 +89,10 @@ void main() async {
     debugPrint = (String? message, {int? wrapWidth}) => null;
   }
 
+  {% for dep in cookiecutter.flutter.dependencies %}
+  {{ dep }}.ensureInitialized();
+  {% endfor %}
+
   runApp(FutureBuilder(
       future: prepareApp(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -89,6 +103,7 @@ void main() async {
                   pageUrl: pageUrl,
                   assetsDir: assetsDir,
                   hideLoadingPage: hideLoadingPage,
+                  createControlFactories: createControlFactories
                 )
               : FutureBuilder(
                   future: runPythonApp(),
@@ -107,6 +122,7 @@ void main() async {
                         pageUrl: pageUrl,
                         assetsDir: assetsDir,
                         hideLoadingPage: hideLoadingPage,
+                        createControlFactories: createControlFactories
                       );
                     }
                   });
