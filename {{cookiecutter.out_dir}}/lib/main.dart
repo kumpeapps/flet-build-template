@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:serious_python/serious_python.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'package:printing/printing.dart';
 
 {% for dep in cookiecutter.flutter.dependencies %}
 import 'package:{{ dep }}/{{ dep }}.dart' as {{ dep }};
