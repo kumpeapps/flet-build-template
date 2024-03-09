@@ -11,6 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  printing: ^5.12.0
+  
   serious_python: ^0.7.0
   # serious_python:
   #   git:
