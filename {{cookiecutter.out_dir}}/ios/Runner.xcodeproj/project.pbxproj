@@ -512,7 +512,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: KumpeApps LLC (2T42Z3DM34)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.kumpeapps.flet.kumpe3dkiosk";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.kumpeapps.flet.kumpe3dkiosk";
 				COPY_PHASE_STRIP = NO;
