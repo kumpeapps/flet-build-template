@@ -1,4 +1,4 @@
-name: {{ cookiecutter.project_name.replace("-", "_") }}
+name: UVT
 description: {{ cookiecutter.project_description }}
 publish_to: 'none'
 

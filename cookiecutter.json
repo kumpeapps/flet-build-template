@@ -1,9 +1,9 @@
 {
     "out_dir": "",
     "python_module_name": "main",
-    "project_name": "UVT",
+    "project_name": "uvt",
     "project_description": "",
-    "product_name": "{{ cookiecutter.project_name }}",
+    "product_name": "UVT",
     "org_name": "com.flet",
     "company_name": "KumpeApps LLC",
     "copyright": "Copyright (c) 2024 KumpeApps LLC",
