@@ -1,0 +1,5 @@
+<string name="asset_statements" translatable="false">
+[{
+  \"include\": \"https://kiosk.kumpe3d.com/.well-known/assetlinks.json\"
+}]
+</string>
