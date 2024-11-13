@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
-		<key>NSPhotoLibraryUsageDescription</key>
-		<string>This app uses photos for logo and backgrounds.</string>
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
 		<key>CFBundleDevelopmentRegion</key>
@@ -54,9 +52,5 @@
 			<key>NSAllowsArbitraryLoads</key>
 			<true />
 		</dict>
-		<key>NSMicrophoneUsageDescription</key>
-		<string>This app needs access to Audio Recording.</string>
-		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>This app needs access to location.</string>
 	</dict>
 </plist>
