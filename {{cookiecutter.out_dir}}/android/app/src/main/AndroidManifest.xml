@@ -54,7 +54,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="https" />
+                <data android:scheme="k3dkiosk" />
                 <data android:host="kiosk.kumpe3d.com" />
             </intent-filter>
         </activity>
