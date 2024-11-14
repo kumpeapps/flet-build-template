@@ -54,12 +54,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="k3dkiosk" 
-                      android:host="kiosk.kumpe3d.com" />
-                <data android:scheme="http"
-                      android:host="kiosk.kumpe3d.com" />
-                <data android:scheme="https"
-                      android:host="kiosk.kumpe3d.com" />
+                <data android:scheme="https" />
+                <data android:host="kiosk.kumpe3d.com" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
