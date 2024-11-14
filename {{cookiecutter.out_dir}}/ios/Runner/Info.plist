@@ -63,7 +63,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-			<string>k3dkiosk://</string>
+			<string>k3dkiosk</string>
 			</array>
 			<key>CFBundleURLName</key>
 			<string>com.kumpeapps.flet.kumpe3dkiosk</string>
