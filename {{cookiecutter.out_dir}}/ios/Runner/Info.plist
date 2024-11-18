@@ -69,9 +69,7 @@
 			<string>com.kumpeapps.flet.kumpe3dkiosk</string>
 		</dict>
 		</array>
-		<dict>
-			<key>FlutterDeepLinkingEnabled</key>
-			<true/>
-		</dict>
+		<key>FlutterDeepLinkingEnabled</key>
+		<true/>
 	</dict>
 </plist>
