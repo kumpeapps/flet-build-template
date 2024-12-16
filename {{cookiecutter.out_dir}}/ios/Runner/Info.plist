@@ -54,22 +54,33 @@
 			<key>NSAllowsArbitraryLoads</key>
 			<true />
 		</dict>
-		<key>NSMicrophoneUsageDescription</key>
-		<string>This app needs access to Audio Recording.</string>
-		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>This app needs access to location.</string>
+
+		<!-- flet: deep linking {% if cookiecutter.options.deep_linking.scheme and cookiecutter.options.deep_linking.host%} -->
+		<key>FlutterDeepLinkingEnabled</key>
+		<true />
 		<key>CFBundleURLTypes</key>
 		<array>
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-			<string>k3dkiosk</string>
-			</array>
-			<key>CFBundleURLName</key>
-			<string>com.kumpeapps.flet.kumpe3dkiosk</string>
-		</dict>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLName</key>
+				<string>{{ cookiecutter.options.deep_linking.host }}</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>{{ cookiecutter.options.deep_linking.scheme }}</string>
+				</array>
+			</dict>
 		</array>
-		<key>FlutterDeepLinkingEnabled</key>
-		<true/>
+		<!-- flet: end of deep linking {% endif %} -->
+		<!-- flet: prop {% for k, v in cookiecutter.options.info_plist.items() %} -->
+		<key>{{ k }}</key>
+		<!-- flet: True {% if v == True %} -->
+		<true />
+		<!-- flet: False {% elif v == False %} -->
+		<false />
+		<!-- flet: string value {% else %} -->
+		<string>{{ v }}</string>
+		<!-- flet: end of prop {% endif %} {% endfor %} -->
+
 	</dict>
 </plist>
