@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>This app uses photos for logo and backgrounds.</string>
+		<key>ITSAppUsesNonExemptEncryption</key>
+		<false/>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
@@ -50,6 +54,7 @@
 			<key>NSAllowsArbitraryLoads</key>
 			<true />
 		</dict>
+
 		<!-- flet: deep linking {% if cookiecutter.options.deep_linking.scheme and cookiecutter.options.deep_linking.host%} -->
 		<key>FlutterDeepLinkingEnabled</key>
 		<true />
@@ -76,5 +81,6 @@
 		<!-- flet: string value {% else %} -->
 		<string>{{ v }}</string>
 		<!-- flet: end of prop {% endif %} {% endfor %} -->
+
 	</dict>
 </plist>
