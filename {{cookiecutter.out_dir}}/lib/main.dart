@@ -11,6 +11,10 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:serious_python/serious_python.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+
 
 import "python.dart";
 

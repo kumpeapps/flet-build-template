@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
+
 	<dict>
 		<!-- flet: entitlement {% for k, v in cookiecutter.options.macos_entitlements.items() %} -->
 		<key>{{ k }}</key>
@@ -11,3 +12,4 @@
 		<!-- flet: end of entitlement {% endif %} {% endfor %} -->
 	</dict>
 </plist>
+
