@@ -29,7 +29,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "{{ cookiecutter.org_name }}.{{ cookiecutter.project_name }}"
+    namespace "{{ cookiecutter.org_name_2 }}.{{ cookiecutter.package_name }}"
     compileSdkVersion flutter.compileSdkVersion
 
     packagingOptions {
@@ -56,10 +56,9 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "{{ cookiecutter.org_name }}.{{ cookiecutter.project_name }}"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+
+        applicationId "{{ cookiecutter.org_name_2 }}.{{ cookiecutter.package_name }}"
+
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
