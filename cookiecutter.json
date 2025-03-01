@@ -2,7 +2,6 @@
     "out_dir": "",
     "python_module_name": "main",
     "project_name": "",
-    "project_name_slug": "",
     "project_description": "",
     "product_name": "{{ cookiecutter.project_name }}",
     "org_name": "com.flet",
@@ -16,9 +15,5 @@
     "base_url": "/",
     "route_url_strategy": "path",
     "web_renderer": "canvaskit",
-    "use_color_emoji": "false",
-    "pwa_background_color": "#FFFFFF",
-    "pwa_theme_color": "#0175C2",
-    "split_per_abi": false,
-    "options": null
+    "use_color_emoji": "false"
 }
