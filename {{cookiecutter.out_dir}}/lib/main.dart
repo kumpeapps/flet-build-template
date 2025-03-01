@@ -5,16 +5,12 @@ import 'package:flet/flet.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:serious_python/serious_python.dart';
 import 'package:url_strategy/url_strategy.dart';
-import 'package:window_manager/window_manager.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-
 
 {% for dep in cookiecutter.flutter.dependencies %}
 import 'package:{{ dep }}/{{ dep }}.dart' as {{ dep }};
@@ -27,6 +23,7 @@ const pythonModuleName = "{{ cookiecutter.python_module_name }}";
 final hideLoadingPage =
     bool.tryParse("{{ cookiecutter.hide_loading_animation }}".toLowerCase()) ??
         true;
+const outLogFilename = "out.log";
 const errorExitCode = 100;
 
 List<CreateControlFactory> createControlFactories = [
@@ -40,9 +37,6 @@ import certifi, os, runpy, socket, sys, traceback
 
 os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
 os.environ["SSL_CERT_FILE"] = certifi.where()
-
-# fix for cryptography package
-os.environ["CRYPTOGRAPHY_OPENSSL_NO_LEGACY"] = "1"
 
 # fix for: https://github.com/flet-dev/serious-python/issues/85#issuecomment-2065000974
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
@@ -59,9 +53,9 @@ if os.getenv("FLET_PLATFORM") == "android":
 
     ssl._create_default_https_context = create_default_context
 
-out_file = open("{outLogFilename}", "w+", buffering=1)
+out_file = open("$outLogFilename", "w+", buffering=1)
 
-callback_socket_addr = os.getenv("FLET_PYTHON_CALLBACK_SOCKET_ADDR")
+callback_socket_addr = os.environ.get("FLET_PYTHON_CALLBACK_SOCKET_ADDR")
 if ":" in callback_socket_addr:
     addr, port = callback_socket_addr.split(":")
     callback_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -81,7 +75,6 @@ sys.exit = flet_exit
 
 ex = None
 try:
-    sys.argv = {argv}
     runpy.run_module("{module_name}", run_name="__main__")
 except Exception as e:
     ex = e
@@ -90,21 +83,17 @@ except Exception as e:
 sys.exit(0 if ex is None else $errorExitCode)
 """;
 
-String outLogFilename = "";
-
 // global vars
 String pageUrl = "";
 String assetsDir = "";
 String appDir = "";
 Map<String, String> environmentVariables = {};
 
-void main(List<String> args) async {
-  if (!args.contains("--debug")) {
+void main() async {
+  if (isProduction) {
     // ignore: avoid_returning_null_for_void
     debugPrint = (String? message, {int? wrapWidth}) => null;
   }
-
-  await setupDesktop();
 
   {% for dep in cookiecutter.flutter.dependencies %}
   {{ dep }}.ensureInitialized();
@@ -120,9 +109,10 @@ void main(List<String> args) async {
                   pageUrl: pageUrl,
                   assetsDir: assetsDir,
                   hideLoadingPage: hideLoadingPage,
-                  createControlFactories: createControlFactories)
+                  createControlFactories: createControlFactories
+                )
               : FutureBuilder(
-                  future: runPythonApp(args),
+                  future: runPythonApp(),
                   builder:
                       (BuildContext context, AsyncSnapshot<String?> snapshot) {
                     if (snapshot.hasData || snapshot.hasError) {
@@ -135,10 +125,11 @@ void main(List<String> args) async {
                     } else {
                       // no result of error
                       return FletApp(
-                          pageUrl: pageUrl,
-                          assetsDir: assetsDir,
-                          hideLoadingPage: hideLoadingPage,
-                          createControlFactories: createControlFactories);
+                        pageUrl: pageUrl,
+                        assetsDir: assetsDir,
+                        hideLoadingPage: hideLoadingPage,
+                        createControlFactories: createControlFactories
+                      );
                     }
                   });
         } else if (snapshot.hasError) {
@@ -163,6 +154,8 @@ Future prepareApp() async {
       setPathUrlStrategy();
     }
   } else {
+    await setupDesktop();
+
     // extract app from asset
     appDir = await extractAssetZip(assetPath, checkHash: true);
 
@@ -170,29 +163,6 @@ Future prepareApp() async {
     Directory.current = appDir;
 
     assetsDir = path.join(appDir, "assets");
-
-    // configure apps DATA and TEMP directories
-    WidgetsFlutterBinding.ensureInitialized();
-
-    var appTempPath = (await path_provider.getApplicationCacheDirectory()).path;
-    var appDataPath =
-        (await path_provider.getApplicationDocumentsDirectory()).path;
-
-    if (defaultTargetPlatform != TargetPlatform.iOS &&
-        defaultTargetPlatform != TargetPlatform.android) {
-      // append app name to the path and create dir
-      PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      appDataPath = path.join(appDataPath, "flet", packageInfo.packageName);
-      if (!await Directory(appDataPath).exists()) {
-        await Directory(appDataPath).create(recursive: true);
-      }
-    }
-
-    environmentVariables["FLET_APP_STORAGE_DATA"] = appDataPath;
-    environmentVariables["FLET_APP_STORAGE_TEMP"] = appTempPath;
-
-    outLogFilename = path.join(appTempPath, "console.log");
-    environmentVariables["FLET_APP_CONSOLE"] = outLogFilename;
 
     environmentVariables["FLET_PLATFORM"] =
         defaultTargetPlatform.name.toLowerCase();
@@ -204,7 +174,7 @@ Future prepareApp() async {
       environmentVariables["FLET_SERVER_PORT"] = tcpPort.toString();
     } else {
       // use UDS on other platforms
-      pageUrl = "flet_$pid.sock";
+      pageUrl = "flet.sock";
       environmentVariables["FLET_SERVER_UDS_PATH"] = pageUrl;
     }
   }
@@ -212,13 +182,8 @@ Future prepareApp() async {
   return "";
 }
 
-Future<String?> runPythonApp(List<String> args) async {
-  var argvItems = args.map((a) => "\"${a.replaceAll('"', '\\"')}\"");
-  var argv = "[${argvItems.isNotEmpty ? argvItems.join(',') : '""'}]";
-  var script = pythonScript
-      .replaceAll("{outLogFilename}", outLogFilename.replaceAll("\\", "\\\\"))
-      .replaceAll('{module_name}', pythonModuleName)
-      .replaceAll('{argv}', argv);
+Future<String?> runPythonApp() async {
+  var script = pythonScript.replaceAll('{module_name}', pythonModuleName);
 
   var completer = Completer<String>();
 
@@ -233,7 +198,7 @@ Future<String?> runPythonApp(List<String> args) async {
         'Python output TCP Server is listening on port ${outSocketServer.port}');
     socketAddr = "$tcpAddr:${outSocketServer.port}";
   } else {
-    socketAddr = "stdout_$pid.sock";
+    socketAddr = "stdout.sock";
     if (await File(socketAddr).exists()) {
       await File(socketAddr).delete();
     }
@@ -351,33 +316,4 @@ Future<int> getUnusedPort() {
     socket.close();
     return port;
   });
-}
-
-bool isDesktop() {
-  return !kIsWeb &&
-      (defaultTargetPlatform == TargetPlatform.windows ||
-          defaultTargetPlatform == TargetPlatform.macOS ||
-          defaultTargetPlatform == TargetPlatform.linux);
-}
-
-Future setupDesktop() async {
-  if (isDesktop()) {
-    WidgetsFlutterBinding.ensureInitialized();
-    await windowManager.ensureInitialized();
-
-    Map<String, String> env = Platform.environment;
-    var hideWindowOnStart = env["FLET_HIDE_WINDOW_ON_START"];
-    var hideAppOnStart = env["FLET_HIDE_APP_ON_START"];
-    debugPrint("hideWindowOnStart: $hideWindowOnStart");
-    debugPrint("hideAppOnStart: $hideAppOnStart");
-
-    await windowManager.waitUntilReadyToShow(null, () async {
-      if (hideWindowOnStart == null && hideAppOnStart == null) {
-        await windowManager.show();
-        await windowManager.focus();
-      } else if (hideAppOnStart != null) {
-        await windowManager.setSkipTaskbar(true);
-      }
-    });
-  }
 }
